@@ -9,29 +9,41 @@ app.get("/fetch", async (req, res) => {
     try {
         var url = req.query.url;
         var data = await ytdl.getInfo(url);
-        res.send({
-            title: data.videoDetails.title,
-            Total_Views: data.videoDetails.viewCount,
-            Category: data.videoDetails.category,
-            thumbnail: data.videoDetails.thumbnails[0].url,
-            videos: [
-                {
-                    itag: data.formats[0].itag,
-                    url: data.formats[0].url,
-                    Quality: data.formats[0].qualityLabel,
-                },
-                {
-                    itag: data.formats[16].itag,
-                    url: data.formats[16].url,
-                    Quality: data.formats[16].qualityLabel,
-                },
-                {
-                    itag: data.formats[17].itag,
-                    url: data.formats[17].url,
-                    Quality: data.formats[17].qualityLabel,
-                },
-            ],
-        });
+        var videos = [];
+        for(const obj of data.formats){
+            if(obj.itag == 137 || obj.itag == 22 || obj.itag == 18){
+                videos.push(obj)
+            }
+        }
+        if(videos.length>0){
+            var datam = []
+            for(const objects of videos){
+               
+                datam.push({
+                    itag: objects.itag,
+                    url: objects.url,
+                    Quality: objects.qualityLabel,
+                })
+              
+            }
+            res.send({
+                title: data.videoDetails.title,
+                Total_Views: data.videoDetails.viewCount,
+                Category: data.videoDetails.category,
+                thumbnail: data.videoDetails.thumbnails[0].url,
+                videos:datam
+            });
+        }
+        else {
+            res.send({
+                title: data.videoDetails.title,
+                Total_Views: data.videoDetails.viewCount,
+                Category: data.videoDetails.category,
+                thumbnail: data.videoDetails.thumbnails[0].url,
+                videos:[]
+            });
+
+        }       
         
     }
     catch {
