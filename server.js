@@ -28,6 +28,7 @@ app.get("/fetch", async (req, res) => {
             }
             res.send({
                 title: data.videoDetails.title,
+                length : datam.length,
                 Total_Views: data.videoDetails.viewCount,
                 Category: data.videoDetails.category,
                 thumbnail: data.videoDetails.thumbnails[0].url,
@@ -36,18 +37,14 @@ app.get("/fetch", async (req, res) => {
         }
         else {
             res.send({
-                title: data.videoDetails.title,
-                Total_Views: data.videoDetails.viewCount,
-                Category: data.videoDetails.category,
-                thumbnail: data.videoDetails.thumbnails[0].url,
-                videos:[]
+                status : 400,
+                message : "Cannot find this video"
             });
 
-        }       
-        
+        }     
     }
-    catch {
-        return res.status(201).send({ status: false, code: 201, message: "Something went Wrong" })
+    catch(err) {
+        return res.status(201).send({ status: false, code: 201, message:err.message })
     }
 
 });
